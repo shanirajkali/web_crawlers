@@ -26,7 +26,16 @@ public class App {
 		 Elements divsOfDomains = doc.select("div[class=col-sm-6 col-xs-6 exam_categories_container]");
 		 //System.out.println(divsOfDomains.get(0).toString());
 		 StringBuffer finalResult = new StringBuffer();
-		 finalResult.append("Domain,"+"Name of Exam,"+"Ways to Attempt,"+"Application Coming Up,"+"Examination Date,"+"Result Announce Date,"+"Some Useful Links"+"\n");
+		 
+		 finalResult.append("Domain,"
+				 +"Name of Exam,"
+				 +"University,"
+				 +"Ways to Attempt,"
+				 +"Application Coming Up,"
+				 +"Examination Date,"
+				 +"Result Announce Date,"
+				 +"Some Useful Links"+"\n");
+		 
 		 for(int i=0;i<divsOfDomains.size();i++){
 			 
 			 Element div=divsOfDomains.get(i);
@@ -40,10 +49,11 @@ public class App {
 			 Elements perticularLinkData=perticularPage.select("div[class=exam_list_view]");
 			
 			 for(int j=0;j<perticularLinkData.size();j++){
-				 Element perticularLink=perticularLinkData.get(j);
 				 
+				 Element perticularLink=perticularLinkData.get(j);
 				 Elements waysToAttempt=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(0) ul li");
 				 String waysToAttemptStr;
+				 
 				 if(waysToAttempt.size()>1){
 					 String temp=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(0) ul li:eq(0)").text();
 					 waysToAttemptStr=temp.substring(0, temp.length()-1)+" "+perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(0) ul li:eq(1)").text();
@@ -51,24 +61,28 @@ public class App {
 				 else{
 					 waysToAttemptStr=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(0) ul li:eq(0)").text();
 				 }
+				 
 				// System.out.println(waysToAttemptStr);
 				// System.out.println(waysToAttempt.size());
 				 Elements div2ExamName=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(1)");
-				 String div2ExamNameStr=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(1) h1").text()+" "+perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(1) span").text();
+				 String div2ExamNameStr0=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(1) h1").text();
+				 String div2ExamNameStr=perticularLink.select("div.exam_list_view div.exam_info_wrapper div:eq(1) div:eq(1) span").text();
 				 String[] ExamNameSplit=div2ExamNameStr.split(",");
 				 div2ExamNameStr="";
+				 
 				 for(int k=0;k<ExamNameSplit.length;k++){
 					 div2ExamNameStr+=ExamNameSplit[k]+" ";
 				 }
+				 
 				 // System.out.println(div2ExamNameStr);
 				 Elements davDates=perticularLink.select("div.exam_list_view div.exam_dates_info ul");
-				 
 				 String formDateExpected=perticularLink.select("div.exam_list_view div.exam_dates_info ul li:eq(0) span").text();
 				 String examinationDateExpected=perticularLink.select("div.exam_list_view div.exam_dates_info ul li:eq(1) span").text();
 				 String rusultAnounceDateExpected=perticularLink.select("div.exam_list_view div.exam_dates_info ul li:eq(2) span").text();
 				 String usefulSource=perticularLink.select("div.exam_list_view div.exam_dates_info ul li:eq(0) h5 a").attr("href");
 				
 				 String finalDetail=testName.toUpperCase()
+						 +","+div2ExamNameStr0
 						 +","+div2ExamNameStr
 						 +","+waysToAttemptStr+","
 						 +formDateExpected+","
@@ -88,6 +102,8 @@ public class App {
 			// finalResult.append("");
 			
 		 }
+		 
+		 
 		 System.out.println(finalResult.toString());
 		 String outputFile = "output_"+System.currentTimeMillis()+".csv";
 		 File fileToStore = new File(outputFile);
@@ -100,5 +116,4 @@ public class App {
 		 bufferedWriterOutput.close();
 
 	}
-
 }
