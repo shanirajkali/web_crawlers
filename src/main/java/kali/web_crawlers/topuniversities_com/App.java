@@ -5,22 +5,31 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/*
+ * @Author Shani RajKali
+ * @Since 24/Jan/2017
+ */
 public class App {
-
+	
 	public static StringBuffer fetchFinalData(String subjectUrl,String countryName,String lavel,String course) throws IOException{
 		
 		StringBuffer completeSubjectUniversityDetailReadyCsv=new StringBuffer();
+		
+		
+		
 	/*
 	 * fetching data for particular domain/subject
-	 * "https://www.topuniversities.com/universities/country/india/level/undergrad/subject/computer-science-information-systems"; 	
+	 * "https://www.topuniversities.com/universities/country/india/level/undergrad/subject/computer-science-information-systems";
+	 *  	
 	 */
-		Document subjectDoc=Jsoup.connect(subjectUrl).get();
+		Document subjectDoc=Jsoup.connect(subjectUrl).timeout(8336739).get();
 		
 	/*
 	 * there is ul in subjectDoc that have the list of universities and their QS World University Ranking.
@@ -28,6 +37,9 @@ public class App {
 	 * that div has child or not.
 	 */
 		Element ulOfUniversities=subjectDoc.getElementById("universities-search");
+		if(ulOfUniversities==null){
+			return completeSubjectUniversityDetailReadyCsv;
+		}
 		Elements all_li_ofUniversities=ulOfUniversities.select("li");
 		if(all_li_ofUniversities==null){
 			return completeSubjectUniversityDetailReadyCsv;
@@ -58,11 +70,13 @@ public class App {
 												);
 		}	
 		
+		
+		
 		return completeSubjectUniversityDetailReadyCsv;
 		
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main() throws IOException {
 		
 		System.out.println("Started At: "+System.currentTimeMillis());
 		
@@ -70,7 +84,7 @@ public class App {
 		result.append("Country Name,"+"Course Lavel,"+"University Name,"+"Course,"+"Ranking"+"\n");
 		
 		String baseUrl="https://www.topuniversities.com/universities";
-		Document baseUrlDoc=Jsoup.connect(baseUrl).get();
+		Document baseUrlDoc=Jsoup.connect(baseUrl).timeout(3424242).get();
 		
 		
 		baseUrlDoc.getElementById("pro-search_api_aggregation_2");
@@ -82,13 +96,16 @@ public class App {
 		
 	aa:	for(int i=0;i<allCountryListOptions.size();i++){
 			
+			StringBuffer particularCountryData =new StringBuffer();
+			particularCountryData.append("Country Name,"+"Course Lavel,"+"University Name,"+"Course,"+"Ranking"+"\n");
+			
 			String countryNameOptionValue=allCountryListOptions.get(i).attr("value");
 		//	System.out.println(countryNameOptionValue);
 			String countryNameOptionText=allCountryListOptions.get(i).text();
 		//	System.out.println(countryNameOptionText);
 			
 			String countryUrl="/country/"+countryNameOptionValue;
-			Document countryDoc=Jsoup.connect(baseUrl+countryUrl).get();
+			Document countryDoc=Jsoup.connect(baseUrl+countryUrl).timeout(434323542).get();
 			
 			//level like postgraduate/undergraduate in dropdown
 			Element levelSelect=countryDoc.getElementById("edit-study-level");
@@ -103,7 +120,7 @@ public class App {
 				//	System.out.println(levelValue);
 					String levelText=levelOptions.get(j).text();
 					
-					Document subjectDoc=Jsoup.connect(baseUrl+"/country/"+allCountryListOptions.get(i).attr("value")+levelValue).get();
+					Document subjectDoc=Jsoup.connect(baseUrl+"/country/"+allCountryListOptions.get(i).attr("value")+levelValue).timeout(23343233).get();
 				//	System.out.println(baseUrl+"/country/"+allCountryListOptions.get(i).attr("value")+levelValue);
 					Element subjectSelect=subjectDoc.getElementById("pro-search_api_aggregation_4");
 					if(subjectSelect!=null){
@@ -112,19 +129,19 @@ public class App {
 						Elements subjectOptions=subjectSelect.select("option");
 //						System.out.println(subjectOptions.size());
 //						System.out.println(subjectOptions);
-						
 						for(int k=0;k<subjectOptions.size();k++){
 						
 							Document finalDetailDoc=Jsoup.connect(baseUrl+"/country/"
 														+allCountryListOptions.get(i).attr("value")
 														+levelValue+"/subject/"
-														+subjectOptions.get(k).attr("value")).get();
+														+subjectOptions.get(k).attr("value")).timeout(342424233).get();
 //							System.out.println(subjectOptions.get(k).attr("value"));
 //							System.out.println(baseUrl+"/country/"
 //									+allCountryListOptions.get(i).attr("value")
 //									+levelValue+"/subject/"
 //									+subjectOptions.get(k).attr("value"));
 							
+													
 						StringBuffer completeSubjectUniversityDetailReadyCsv = fetchFinalData(baseUrl+"/country/"
 																					+allCountryListOptions.get(i).attr("value")
 																					+levelValue+"/subject/"
@@ -134,6 +151,7 @@ public class App {
 																					,subjectOptions.get(k).text());
 						
 							result.append(completeSubjectUniversityDetailReadyCsv);
+							particularCountryData.append(completeSubjectUniversityDetailReadyCsv.toString());
 							System.out.println(result.toString());
 						}
 						
@@ -145,6 +163,15 @@ public class App {
 				System.out.println("||?////\"\"|?|?/|\"?||");
 				break aa;
 				}
+			File countryNameFile=new File("particular_country_"+System.currentTimeMillis()+"_.csv");
+			if(!countryNameFile.exists())	countryNameFile.createNewFile();
+			FileWriter fileWriter = new FileWriter(countryNameFile,true);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(particularCountryData.toString());
+			bufferedWriter.newLine();
+			bufferedWriter.flush();
+			bufferedWriter.close();
+			
 		}
 		
 		File countryNameFile=new File("topuniversities_"+System.currentTimeMillis()+"_.csv");
@@ -156,7 +183,5 @@ public class App {
 		bufferedWriter.flush();
 		bufferedWriter.close();
 		
-
 	}
-
 }

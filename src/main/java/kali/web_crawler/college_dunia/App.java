@@ -15,10 +15,10 @@ public class App {
 	public static void main(String[] args) throws IOException {
 		
 		Document doc = Jsoup.connect("https://exams.collegedunia.com/").timeout(30000).get();
-	//	System.out.println(doc.toString());
+		System.out.println(doc.toString());
 		FileWriter fileWriter = new FileWriter(new File("exams_collegedunia_com.html"),true);
 		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-	//	bufferedWriter.write(doc.toString());
+		bufferedWriter.write(doc.toString());
 		bufferedWriter.newLine();
 		bufferedWriter.flush();
 		bufferedWriter.close();

@@ -23,7 +23,7 @@ public class UrlFetch {
 	 * @param args
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main() throws IOException {
 		
 		//reader for reading "pageLink.txt" file in which number of URL that we have to fect is stord
 		BufferedReader reader=new BufferedReader(new FileReader("pageLink.txt"));
